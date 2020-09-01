@@ -8,7 +8,10 @@ def main():
 	c_sum = 0
 	c = b
 	for n in range(1, 50000000):
-		mod = (mod + a) % b
+		mod = mod + a
+		if mod > b:
+			mod -= b
+
 		if mod < c:
 			c = mod
 			c_sum += mod

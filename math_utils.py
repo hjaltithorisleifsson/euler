@@ -63,3 +63,32 @@ def isPrime(n):
 			d += 6
 
 		return True
+
+def trapezoidal(f, a, b, n):
+	h = (b - a) / n
+	I = 0.5 * (f(a) + f(b))
+	for i in range(1, n):
+		I += f(a + i * h)
+
+	return I * h
+
+def integrate(f, a, b, tol):
+	error = math.inf
+	max_it = 100
+	it = 0
+
+	n = 2
+	X_i = [trapezoidal(f,a,b,n)]
+	while error > tol and it < max_it:
+		i = len(X_i)
+		n *= 2
+		X_ip = [0 for i in range(i+1)]
+		X_ip[0] = trapezoidal(f,a,b,n)
+		for j in range(1, i + 1):
+			fj = 4**j
+			X_ip[j] = (fj * X_ip[j-1] - X_i[j-1]) / (fj - 1)
+
+		error = math.fabs(X_i[-1] - X_ip[-1])
+		X_i = X_ip
+
+	return X_i[-1]
