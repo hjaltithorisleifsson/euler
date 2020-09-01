@@ -89,6 +89,7 @@ def integrate(f, a, b, tol):
 			X_ip[j] = (fj * X_ip[j-1] - X_i[j-1]) / (fj - 1)
 
 		error = math.fabs(X_i[-1] - X_ip[-1])
+		it += 1
 		X_i = X_ip
 
 	return X_i[-1]
