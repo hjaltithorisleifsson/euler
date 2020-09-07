@@ -1,5 +1,15 @@
 import math
 
+
+############################################################
+# Various utility functions for mathematical problems. 
+# Author: Hjalti Thor Isleifsson
+############################################################
+
+############################################################
+#################### Number theory #########################
+############################################################
+
 def gcd(a, b):
 	while b != 0:
 		q = a // b
@@ -63,6 +73,116 @@ def isPrime(n):
 			d += 6
 
 		return True
+
+def sqrt(n):
+	if n == 0:
+		return 0
+	elif n < 4:
+		return 1
+	elif n < 9:
+		return 2
+	elif n < 16:
+		return 3
+	elif n < 25:
+		return 4
+	else:
+		lower = 5
+		upper = n // 5
+		while lower < upper: 
+			x = (lower + upper + 1) >> 1
+			if x * x <= n:
+				lower = x
+			else:
+				upper = x - 1
+
+		return lower
+
+
+#Returns a list of all primes less then or equal to n.
+def allPrimes(n):
+	primes = [0] * int(1.2 * n / math.log(n))
+	p_idx = 0
+	d = sqrt(n)
+	flags = [True] * d
+	flags[0] = False
+	flags[1] = False
+
+	for i in range(2, d):
+		if flags[i]:
+			primes.insert(p_idx, i)
+			p_idx += 1
+			for j in range(2 * i, d, i):
+				flags[j] = False
+		
+		else:
+			flags[i] = True
+
+	n_iv = n // d + 1
+	for iv_idx in range(1, n_iv):
+		offset = iv_idx * d
+		upto = min(n + 1, offset + d)
+
+		sqrt_upto = sqrt(upto)
+		for p in primes:
+			if p > sqrt_upto or p == 0:
+				break
+			else:
+				for j in range(((offset + p - 1) // p) * p - offset, upto - offset, p):
+					flags[j] = False
+
+		for i in range(upto - offset):
+			if flags[i]:
+				primes.insert(p_idx, i + offset)
+				p_idx += 1
+			else:
+				flags[i] = True
+
+	return primes[0:p_idx]
+
+#Returns the nth Fibonacci number
+# f_0 = 1, f_1 = 1 and f_(n+2) = f_(n+1) + f_n
+def fibonacci(n):
+	if n == 0 or n == 1:
+		return 1
+	else: 
+		A_11 = 1
+		A_12 = 1
+		A_21 = 1
+		A_22 = 0
+
+		A_n_11 = 1
+		A_n_12 = 1
+		A_n_21 = 1
+		A_n_22 = 0
+
+		m = n - 2
+		while m != 0:
+			A_nm_11 = A_n_11
+			A_nm_12 = A_n_12
+			A_nm_21 = A_n_21
+			A_nm_22 = A_n_22
+
+			if m & 1 == 1:
+				A_n_11 = A_nm_11 * A_11 + A_nm_12 * A_21
+				A_n_12 = A_nm_11 * A_12 + A_nm_12 * A_22
+				A_n_21 = A_nm_21 * A_11 + A_nm_22 * A_21
+				A_n_22 = A_nm_21 * A_12 + A_nm_22 * A_22
+				m -= 1
+			else:
+				A_n_11 = A_nm_11 * A_nm_11 + A_nm_12 * A_nm_21
+				A_n_12 = A_nm_11 * A_nm_12 + A_nm_12 * A_nm_22
+				A_n_21 = A_nm_21 * A_nm_11 + A_nm_22 * A_nm_21
+				A_n_22 = A_nm_21 * A_nm_12 + A_nm_22 * A_nm_22
+				m >>= 1
+
+		return A_n_11 + A_n_12
+
+
+
+
+#########################################################
+################## Numerical schemes ####################
+#########################################################
 
 def trapezoidal(f, a, b, n):
 	h = (b - a) / n
