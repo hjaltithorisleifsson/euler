@@ -74,29 +74,6 @@ def isPrime(n):
 
 		return True
 
-def sqrt(n):
-	if n == 0:
-		return 0
-	elif n < 4:
-		return 1
-	elif n < 9:
-		return 2
-	elif n < 16:
-		return 3
-	elif n < 25:
-		return 4
-	else:
-		lower = 5
-		upper = n // 5
-		while lower < upper: 
-			x = (lower + upper + 1) >> 1
-			if x * x <= n:
-				lower = x
-			else:
-				upper = x - 1
-
-		return lower
-
 
 #Returns a list of all primes less then or equal to n.
 def allPrimes(n):
@@ -170,47 +147,52 @@ def phi(n):
 
 	return phi_n
 
+############################################################
+######################## Sequences #########################
+############################################################
 
-#Returns the nth Fibonacci number
+
+#Returns the nth Fibonacci number in ln(n) time.
 # f_0 = 1, f_1 = 1 and f_(n+2) = f_(n+1) + f_n
 def fibonacci(n):
 	if n == 0 or n == 1:
 		return 1
-	else: 
-		A_11 = 1
-		A_12 = 1
-		A_21 = 1
-		A_22 = 0
 
-		A_n_11 = 1
-		A_n_12 = 1
-		A_n_21 = 1
-		A_n_22 = 0
+	R_11 = 1
+	R_12 = 1
+	R_21 = 1
+	R_22 = 0
+	A_n_11 = 1
+	A_n_12 = 0
+	A_n_21 = 0
+	A_n_22 = 1
 
-		m = n - 2
-		while m != 0:
-			A_nm_11 = A_n_11
-			A_nm_12 = A_n_12
-			A_nm_21 = A_n_21
-			A_nm_22 = A_n_22
+	while True:
+		if n & 1 == 1:
+			old_A_n_11 = A_n_11
+			old_A_n_12 = A_n_12
+			old_A_n_21 = A_n_21
+			old_A_n_22 = A_n_22
+			A_n_11 = old_A_n_11 * R_11 + old_A_n_12 * R_21
+			A_n_12 = old_A_n_11 * R_12 + old_A_n_12 * R_22
+			A_n_21 = old_A_n_21 * R_11 + old_A_n_22 * R_21
+			A_n_22 = old_A_n_21 * R_12 + old_A_n_22 * R_22
 
-			if m & 1 == 1:
-				A_n_11 = A_nm_11 * A_11 + A_nm_12 * A_21
-				A_n_12 = A_nm_11 * A_12 + A_nm_12 * A_22
-				A_n_21 = A_nm_21 * A_11 + A_nm_22 * A_21
-				A_n_22 = A_nm_21 * A_12 + A_nm_22 * A_22
-				m -= 1
-			else:
-				A_n_11 = A_nm_11 * A_nm_11 + A_nm_12 * A_nm_21
-				A_n_12 = A_nm_11 * A_nm_12 + A_nm_12 * A_nm_22
-				A_n_21 = A_nm_21 * A_nm_11 + A_nm_22 * A_nm_21
-				A_n_22 = A_nm_21 * A_nm_12 + A_nm_22 * A_nm_22
-				m >>= 1
+		n >>= 1
+		if n == 0:
+			break
 
-		return A_n_11 + A_n_12
+		old_R_11 = R_11
+		old_R_12 = R_12
+		old_R_21 = R_21
+		old_R_22 = R_22
 
+		R_11 = old_R_11 * old_R_11 + old_R_12 * old_R_21
+		R_12 = old_R_11 * old_R_12 + old_R_12 * old_R_22
+		R_21 = old_R_21 * old_R_11 + old_R_22 * old_R_21
+		R_22 = old_R_21 * old_R_12 + old_R_22 * old_R_22
 
-
+	return A_n_11
 
 #########################################################
 ################## Numerical schemes ####################
@@ -245,3 +227,50 @@ def integrate(f, a, b, tol):
 		X_i = X_ip
 
 	return X_i[-1]
+
+#######################################################
+################# Basic operations ####################
+#######################################################
+
+def sqrt(n):
+	if n == 0:
+		return 0
+	elif n < 4:
+		return 1
+	elif n < 9:
+		return 2
+	elif n < 16:
+		return 3
+	elif n < 25:
+		return 4
+	else:
+		lower = 5
+		upper = n // 5
+		while lower < upper: 
+			x = (lower + upper + 1) >> 1
+			if x * x <= n:
+				lower = x
+			else:
+				upper = x - 1
+
+		return lower
+
+#Computes x^n where n in ln(n) time where n is a positve integer.
+def pow(x, n):
+	if n == 0:
+		return 1
+
+	r = x
+	y = 1
+	while True:
+		if n & 1 == 1:
+			y *= r
+		
+		n >>= 1
+
+		if n == 0:
+			break
+
+		r *= r
+
+	return y
