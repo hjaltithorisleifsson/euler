@@ -100,6 +100,13 @@ def sqrt(n):
 
 #Returns a list of all primes less then or equal to n.
 def allPrimes(n):
+	if n < 2:
+		return []
+	if n < 3:
+		return [2]
+	if n < 5: 
+		return [2, 3]
+
 	primes = [0] * int(1.2 * n / math.log(n))
 	p_idx = 0
 	d = sqrt(n)
@@ -107,7 +114,7 @@ def allPrimes(n):
 	flags[0] = False
 	flags[1] = False
 
-	for i in range(2, d):
+	for i in range(0, d):
 		if flags[i]:
 			primes.insert(p_idx, i)
 			p_idx += 1
@@ -138,6 +145,31 @@ def allPrimes(n):
 				flags[i] = True
 
 	return primes[0:p_idx]
+
+#Computes the Euler's totient function of n.
+def phi(n):
+	sqrt_n = sqrt(n)
+	primes = allPrimes(sqrt_n)
+	phi_n = 1
+
+	for p in primes:
+		if p > n: 
+			break
+		else:
+			if n % p == 0:
+				n //= p
+				phi_n *= p - 1
+
+			while n % p == 0:
+				n //= p
+				phi_n *= p
+
+	if n != 1:
+		#n must be a prime
+		phi_n *= n - 1
+
+	return phi_n
+
 
 #Returns the nth Fibonacci number
 # f_0 = 1, f_1 = 1 and f_(n+2) = f_(n+1) + f_n
