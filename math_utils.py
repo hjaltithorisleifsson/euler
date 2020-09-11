@@ -194,6 +194,24 @@ def fibonacci(n):
 
 	return A_n_11
 
+#f: An increasing unbounded sequence.
+#Finds the greatest i s.t. f_i <= n using binary search.
+def bin_inv_seq(f, n):
+	lower = 0
+	upper = 1
+	while f(upper) <= n:
+		lower = upper
+		upper <<= 1
+
+	while lower < upper: 
+		mid = (lower + upper + 1) >> 1
+		if f(mid) <= n:
+			lower = mid
+		else:
+			upper = mid - 1
+
+	return lower
+
 #########################################################
 ################## Numerical schemes ####################
 #########################################################
