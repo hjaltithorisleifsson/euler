@@ -84,9 +84,10 @@ def allPrimes(n):
 	if n < 5: 
 		return [2, 3]
 
+	#We use segmented sieve.
 	primes = [0] * int(1.2 * n / math.log(n))
 	p_idx = 0
-	d = sqrt(n)
+	d = sqrt(n) #Length of the segment.
 	flags = [True] * d
 	flags[0] = False
 	flags[1] = False
@@ -97,16 +98,16 @@ def allPrimes(n):
 			p_idx += 1
 			for j in range(2 * i, d, i):
 				flags[j] = False
-		
-		else:
-			flags[i] = True
 
-	n_iv = n // d + 1
+	n_iv = (n + d - 1) // d #Number of intervals
 	for iv_idx in range(1, n_iv):
 		offset = iv_idx * d
 		upto = min(n + 1, offset + d)
-
 		sqrt_upto = sqrt(upto)
+
+		for i in range(d):
+			flags[i] = True
+
 		for p in primes:
 			if p > sqrt_upto or p == 0:
 				break
@@ -118,8 +119,6 @@ def allPrimes(n):
 			if flags[i]:
 				primes.insert(p_idx, i + offset)
 				p_idx += 1
-			else:
-				flags[i] = True
 
 	return primes[0:p_idx]
 
